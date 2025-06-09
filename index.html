@@ -1,0 +1,526 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mary Rani Premium Birthday Wishes</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter (for general text), Dancing Script (decorative), Great Vibes (elegant script) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Dancing+Script:wght@400;700&family=Great+Vibes&display=swap" rel="stylesheet">
+    <!-- jsPDF library for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- html2canvas library for accurate canvas rendering to image (crucial for fonts in PDF) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Very subtle radial gradient for a soft, almost white background */
+            background: radial-gradient(circle at top left, #F9FAFB, #F2F5F7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Full viewport height */
+            margin: 0;
+            padding: 40px; /* Increased padding around the entire body */
+            box-sizing: border-box;
+            color: #333; /* Darker grey for default text for readability */
+            overflow-x: hidden; /* Prevent horizontal scroll on small screens */
+        }
+        .container {
+            max-width: 1400px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 50px; /* Increased gap for more breathing room */
+            background-color: #ffffff;
+            border-radius: 20px;
+            /* Softer, more refined shadow for the main container */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            padding: 40px;
+            align-items: flex-start;
+        }
+        @media (min-width: 768px) {
+            .container {
+                flex-direction: row;
+                align-items: center;
+            }
+        }
+        .control-panel {
+            background-color: #ffffff; /* Pure white background for the control panel */
+            border-radius: 16px;
+            /* Lighter, more subtle shadow for the panel */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #E0E0E0; /* Very light grey border */
+            padding: 30px;
+            flex: 1;
+        }
+        .card-preview-area {
+            flex: 1.2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 600px;
+            padding: 20px;
+        }
+        canvas#birthdayCardCanvas {
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+            aspect-ratio: 7.5 / 10;
+            background-color: #fff;
+            border: 1px solid #EAEAEA; /* Extremely light grey border */
+            border-radius: 18px;
+            /* Very subtle shadow for the canvas */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; /* Faster, smoother transition */
+        }
+        canvas#birthdayCardCanvas:hover {
+             transform: translateY(-3px); /* Subtle lift on hover */
+             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); /* Slightly more pronounced shadow on hover */
+        }
+
+
+
+
+        /* Input styling */
+        input[type="text"],
+        textarea,
+        input[type="file"] {
+            padding: 12px;
+            border: 1px solid #D1D1D1; /* Light grey border */
+            border-radius: 8px;
+            font-size: 1.05rem;
+            color: #333;
+            background-color: #FDFDFD; /* Almost white background for inputs */
+            transition: border-color 0.15s ease-out, box-shadow 0.15s ease-out;
+        }
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #007AFF; /* Apple-like blue accent */
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15); /* Soft, subtle focus glow */
+            background-color: #ffffff;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 140px;
+        }
+        /* Style for the file input's button */
+        input[type="file"]::file-selector-button {
+            background-color: #F0F0F0; /* Light grey button */
+            color: #333; /* Dark text */
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: 1px solid #C0C0C0;
+            font-weight: 400;
+            cursor: pointer;
+            transition: background-color 0.15s ease-out, border-color 0.15s ease-out;
+        }
+        input[type="file"]::file-selector-button:hover {
+            background-color: #E0E0E0;
+            border-color: #A0A0A0;
+        }
+        input[type="file"]::file-selector-button:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
+        }
+
+
+
+
+        /* Button styling */
+        .btn {
+            background-color: #007AFF; /* Primary blue, simple solid color */
+            color: white;
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-weight: 600; /* Medium-bold */
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.15s ease-out, transform 0.1s ease-out, box-shadow 0.15s ease-out; /* Faster transitions */
+            box-shadow: 0 3px 8px rgba(0, 122, 255, 0.2); /* Subtle blue shadow */
+            border: none;
+        }
+        .btn:hover {
+            background-color: #006BB8; /* Slightly darker blue on hover */
+            transform: translateY(-2px); /* Very subtle lift */
+            box-shadow: 0 5px 12px rgba(0, 122, 255, 0.3); /* Slightly more pronounced shadow */
+        }
+        .btn-delete {
+            background-color: #DC3545; /* Red */
+            box-shadow: 0 3px 8px rgba(220, 53, 69, 0.2);
+        }
+        .btn-delete:hover {
+            background-color: #BD2130;
+            box-shadow: 0 5px 12px rgba(220, 53, 69, 0.3);
+        }
+        .btn-download {
+            background-color: #28A745; /* Green */
+            box-shadow: 0 3px 8px rgba(40, 167, 69, 0.2);
+        }
+        .btn-download:hover {
+            background-color: #218838;
+            box-shadow: 0 5px 12px rgba(40, 167, 69, 0.3);
+        }
+
+
+        /* Message box styles (more minimalist and clean) */
+        .message-box-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.75); /* More transparent white overlay */
+            backdrop-filter: blur(5px); /* Subtle blur effect */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .message-box-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .message-box {
+            background-color: #ffffff;
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Softer shadow */
+            text-align: center;
+            max-width: 480px;
+            width: 90%;
+            transform: translateY(-20px); /* Less pronounced lift */
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.5, 1); /* Smoother curve */
+            border: 1px solid #E0E0E0; /* Light border */
+        }
+        .message-box-overlay.active .message-box {
+            transform: translateY(0);
+        }
+        .message-box h3 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .message-box p {
+            font-size: 1.05rem;
+            margin-bottom: 30px;
+            color: #555;
+        }
+        .message-box button {
+            background-color: #007AFF;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.15s ease-out, transform 0.1s ease-out;
+            border: none;
+            box-shadow: 0 2px 5px rgba(0, 122, 255, 0.15);
+        }
+        .message-box button:hover {
+            background-color: #006BB8;
+            transform: translateY(-1px);
+        }
+
+
+        /* Loading indicator styles (more elegant) */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.85); /* Slightly less opaque white overlay */
+            backdrop-filter: blur(3px); /* Subtle blur */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+        .loading-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        .spinner {
+            border: 6px solid rgba(0, 0, 0, 0.08); /* Thinner, lighter spinner border */
+            border-top: 6px solid #007AFF; /* Primary blue spinner */
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 0.8s linear infinite; /* Faster, linear spin */
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Card Customization Panel -->
+        <div class="control-panel w-full md:w-1/2 flex flex-col gap-6">
+            <h2 class="text-3xl font-semibold text-center text-gray-800 mb-4">✨ Create Birthday Wishes ✨</h2>
+
+
+            <div>
+                <label for="studentName" class="block text-gray-600 text-base font-medium mb-2">Student's Name:</label>
+                <input type="text" id="studentName" class="w-full" placeholder="Enter student's name" value="[Student Name]">
+            </div>
+
+
+            <div>
+                <label for="birthdayMessage" class="block text-gray-600 text-base font-medium mb-2">Birthday Message:</label>
+                <textarea id="birthdayMessage" class="w-full" placeholder="Write your personalized birthday message here..." rows="6">Wishing you a very Happy Birthday! May your special day be filled with joy, laughter, and wonderful memories. Stay blessed and keep shining brightly!</textarea>
+            </div>
+
+
+            <div>
+                <label for="photoUpload" class="block text-gray-600 text-base font-medium mb-2">Upload Student Photo (Optional):</label>
+                <input type="file" id="photoUpload" accept="image/*" class="w-full">
+            </div>
+
+
+            <button id="generateCardButton" class="btn w-full mt-4">
+                Generate Card Preview
+            </button>
+            <button id="deletePhotoButton" class="btn btn-delete w-full mt-2">
+                Delete Photo
+            </button>
+            <button id="downloadPdfButton" class="btn btn-download w-full mt-2">
+                Download Card (PDF)
+            </button>
+        </div>
+
+
+        <!-- Card Preview Area -->
+        <div class="card-preview-area">
+            <canvas id="birthdayCardCanvas"></canvas>
+        </div>
+    </div>
+
+
+    <!-- Message Box Overlay -->
+    <div id="messageBoxOverlay" class="message-box-overlay">
+        <div class="message-box">
+            <h3 id="messageBoxTitle"></h3>
+            <p id="messageBoxContent"></p>
+            <button id="messageBoxCloseButton">OK</button>
+        </div>
+    </div>
+
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
+
+    <script>
+        // DOM elements
+        const studentNameInput = document.getElementById('studentName');
+        const birthdayMessageInput = document.getElementById('birthdayMessage');
+        const photoUploadInput = document.getElementById('photoUpload');
+        const generateCardButton = document.getElementById('generateCardButton');
+        const deletePhotoButton = document.getElementById('deletePhotoButton');
+        const downloadPdfButton = document.getElementById('downloadPdfButton');
+        const canvas = document.getElementById('birthdayCardCanvas');
+        const ctx = canvas.getContext('2d');
+
+
+        const messageBoxOverlay = document.getElementById('messageBoxOverlay');
+        const messageBoxTitle = document.getElementById('messageBoxTitle');
+        const messageBoxContent = document.getElementById('messageBoxContent');
+        const messageBoxCloseButton = document.getElementById('messageBoxCloseButton');
+
+
+        const loadingOverlay = document.getElementById('loadingOverlay');
+
+
+        let uploadedImage = null; // Stores the uploaded image object
+
+
+        // --- Message Box Functions ---
+        /**
+         * Displays a custom message box.
+         * @param {string} title - The title of the message box.
+         * @param {string} message - The content message.
+         */
+        function showMessageBox(title, message) {
+            messageBoxTitle.textContent = title;
+            messageBoxContent.textContent = message;
+            messageBoxOverlay.classList.add('active');
+        }
+
+
+        /**
+         * Hides the custom message box.
+         */
+        function hideMessageBox() {
+            messageBoxOverlay.classList.remove('active');
+        }
+        messageBoxCloseButton.addEventListener('click', hideMessageBox);
+
+
+        // --- Loading Indicator Functions ---
+        /**
+         * Shows the loading overlay.
+         */
+        function showLoading() {
+            loadingOverlay.classList.add('active');
+        }
+
+
+        /**
+         * Hides the loading overlay.
+         */
+        function hideLoading() {
+            loadingOverlay.classList.remove('active');
+        }
+
+
+        // --- Canvas Drawing Functions ---
+        /**
+         * Wraps text to fit within a specified width on the canvas, with center alignment.
+         * @param {CanvasRenderingContext2D} context - The canvas rendering context.
+         * @param {string} text - The text to wrap.
+         * @param {number} x - The X coordinate (center for center alignment).
+         * @param {number} y - The starting Y coordinate.
+         * @param {number} maxWidth - The maximum width for the text.
+         * @param {number} lineHeight - The height of each line.
+         * @returns {number} The Y coordinate after drawing all lines.
+         */
+        function wrapText(context, text, x, y, maxWidth, lineHeight) {
+            const words = text.split(' ');
+            let line = '';
+            let currentY = y;
+
+
+            // Save current textAlign and set to center
+            const originalTextAlign = context.textAlign;
+            context.textAlign = 'center';
+
+
+            for (let n = 0; n < words.length; n++) {
+                const testLine = line + words[n] + ' ';
+                const metrics = context.measureText(testLine);
+                const testWidth = metrics.width;
+                if (testWidth > maxWidth && n > 0) {
+                    context.fillText(line.trim(), x, currentY);
+                    line = words[n] + ' ';
+                    currentY += lineHeight;
+                } else {
+                    line = testLine;
+                }
+            }
+            context.fillText(line.trim(), x, currentY);
+            // We explicitly control currentY increments outside for precise layout.
+            context.textAlign = originalTextAlign; // Restore original alignment
+            return currentY; // Return where the last line ended
+        }
+
+
+        /**
+         * Draws a rounded rectangle path.
+         * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
+         * @param {number} x - The x-coordinate of the upper-left corner of the rectangle.
+         * @param {number} y - The y-coordinate of the upper-left corner of the rectangle.
+         * @param {number} width - The width of the rectangle.
+         * @param {number} height - The height of the rectangle.
+         * @param {number} radius - The corner radius.
+         */
+        function roundRect(ctx, x, y, width, height, radius) {
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + width - radius, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+            ctx.lineTo(x + width, y + height - radius);
+            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+            ctx.lineTo(x + radius, y + height);
+            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+            ctx.lineTo(x, y + radius);
+            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.closePath();
+        }
+
+
+
+
+        /**
+         * Draws the complete birthday card on the canvas, styled for Mary Rani Public School.
+         */
+        function drawCard() {
+            // Define canvas dimensions for a portrait card
+            const cardWidth = 750; // Increased width for more space
+            const cardHeight = 1000;
+            canvas.width = cardWidth;
+            canvas.height = cardHeight;
+
+
+            // Clear canvas
+            ctx.clearRect(0, 0, cardWidth, cardHeight);
+
+
+            // --- PREMIUM DESIGN BACKGROUND ---
+
+
+            // 1. Base Gradient: Soft, multi-color linear gradient
+            const backgroundGradient = ctx.createLinearGradient(0, 0, cardWidth, cardHeight);
+            backgroundGradient.addColorStop(0, '#F8F9FA'); /* Very light top-left */
+            backgroundGradient.addColorStop(1, '#E9F5F9'); /* Slightly lighter blue bottom-right */
+            ctx.fillStyle = backgroundGradient;
+            ctx.fillRect(0, 0, cardWidth, cardHeight);
+
+
+            // 2. Subtle Geometric Pattern Overlay (very light, elegant) - Adjusted for softer appearance
+            ctx.save();
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)'; /* More transparent white */
+            ctx.lineWidth = 0.8; /* Thinner lines */
+            const patternSpacing = 80; /* Increased spacing */
+            for (let i = 0; i < cardWidth + cardHeight; i += patternSpacing) {
+                ctx.beginPath();
+                ctx.moveTo(0, i);
+                ctx.lineTo(i, 0);
+                ctx.stroke();
+
+
+                ctx.beginPath();
+                ctx.moveTo(cardWidth, i - cardWidth);
+                ctx.lineTo(i, cardHeight);
+                ctx.stroke();
+            }
+            ctx.restore();
+
+
+
+
+            // 3. Elegant Sparkles (more refined, less cluttered than confetti) - Softened
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)'; /* Slightly less opaque white */
+            ctx.shadowColor = 'rgba(255, 255, 255, 0.6)'; /* Less intense glow */
+            ctx.shadowBlur = 5; /* Softer blur */
+            for (let i = 0; i < 80; i++) { /* Fewer sparkles */
+                const x = Math.random() * cardWidth;
+                const y = Math.random() * cardHeight;
+                const size = Math.random() * 1.5 + 0.5; /* Smaller size range */
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.shadowColor = 'transparent'; /* Reset shadow */
+            ctx.shadowBlur = 0;
+
+
+
+
+            // --- Card Border (Defined and clean) - Softened ---
+            const borderWidth = 8; /* Thinner border */
+            const borderRadius = 20;
